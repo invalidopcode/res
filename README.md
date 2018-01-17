@@ -24,7 +24,7 @@ for optimisation that I hope to implement in future. The main reason this is
 not a library is that the kind of functions here (eg linked lists) will almost
 certainly need minor adaptations for use in real projects.
 
-ALL function names MUST BE preceded by res_[modulename]_ - for example,
+ALL function names MUST BE preceded by res\_\[modulename\]\_ - for example,
 res_bitmap_create(). Generally, modules work with resources by means of handles
 and pointers. The purpose of resource modules is to create extensible peices of
 code that can be included in projects simply.
@@ -131,12 +131,13 @@ rounding towards 0)
 
 Tests
 -----
-Unit tests MAY be written in files [modulename]_test.c
-Interactive tests MAY be written in files [modulename]_interactive_test.c
+Unit tests MAY be written in files [modulename]\_test.c
+
+Interactive tests MAY be written in files [modulename]\_interactive_test.c
 
 Internal Functions
 ------------------
-_res_..._size and _res_..._set functions are implemented for SOME 'external'
+\_res\_...\_size and \_res\_...\_set functions are implemented for SOME 'external'
 functions that allocate memory. These MAY be standard c functions OR they
 MAY be implemented as macros or inlines in the module header file. (This will
 be useful in freestanding environments where basic memory management functions
