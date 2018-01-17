@@ -1,0 +1,346 @@
+********************
+* RES_ERR_STRING_1 *
+********************
+Latest MINOR version: 0
+
+const char* res_err_string(int err)
+  * takes an errno code passed by a res_... function - err
+  * returns a pointer to a string describing the error code and suitable for
+   printing
+  * if the error code is not one of those defined in res_err.h, defaults to
+   returning the result of strerror(err) - so error codes from stdc lib, etc
+   can be passed to this function too.
+
+**********
+* LIST_2 *
+**********
+Latest minor version: 0
+
+types:
+  res_list_t - list handle
+
+res_list_t* res_list_create()
+  * allocates memory for a list handle and sets initial values
+  * Returns: pointer to new list on success, NULL on failure
+  * errno preserved on malloc fail
+
+ushort res_list_destroy(res_list_t* list)
+  * frees list handle
+  * a list MUST be empty to be destroyed
+  * Returns: 0 on success, 1 on list handle invalid, 2 on list not empty
+
+ushort res_list_add(res_list_t* list,
+                    void* resource,
+                    RES_ID id,
+                    RES_TYPE type,
+                    RES_SORT_KEY sort_key)
+  * inserts a new entry into a list
+  * the greater the sort_key, the closer the entry will be to the
+   start of the list. Sort keys that are equal have undefined order
+  * sort keys MAY be negative
+  * Returns 0 on success, 2 on memory error
+  * errno preserved from malloc on memory error
+
+ushort res_list_remove(res_list_t* list)
+  * removes current node from a list & frees from memory
+  * Returns: 0 on success, 2 on no current node
+
+ushort res_list_seek(res_list_t* list, size_t index)
+  * set current node to list entry given by index
+  * Returns 0 on success, 2 on index out of range
+
+ushort res_list_next(res_list_t* list)
+  * jumps to the next entry on the list from the current one
+  * Returns 0 on success, 2 on end of list,
+   3 on no current node set
+
+ushort res_list_prev(res_list_t* list)
+  * jumps to the previous entry on the list from the current one
+  * Returns 0 on success, 2 when already at start of list,
+   3 on no current node set
+
+void* res_list_get_resource(res_list_t* list)
+  * gets the resource pointer of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: pointer on success, NULL on failure
+  * errno is set to a res_err.h error code
+  * in the event that the resource pointer really is NULL, errno is set to 0
+   to signify this
+
+RES_ID res_list_get_id(res_list_t* list)
+  * gets the id of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: pointer on success, RES_ID_ERR on failure
+  * errno is set to a res_err.h error code
+
+RES_TYPE res_list_get_type(res_list_t* list)
+  * gets the type value of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: pointer on success, RES_TYPE_ERR on failure
+  * errno is set to a res_err.h error code
+
+RES_SORT_KEY res_list_get_sort_key(res_list_t* list)
+  * gets the sort key value of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: pointer on success, RES_SORT_KEY_ERR on failure
+  * errno is set to a res_err.h error code
+
+ushort res_list_ch_resource(res_list_t* list, void* resource)
+  * changes the resource pointer of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: 0 on success, 2 on no current node
+
+ushort res_list_ch_id(res_list_t* list, RES_ID id)
+  * changes the id of the current node of a list
+  * current node may be set using seek, next, prev
+  * Returns: 0 on success, 2 on no current node
+
+ushort res_list_ch_type(res_list_t* list, RES_TYPE type)
+ * changes the type value of the current node of a list
+ * current node may be set using seek, next, prev
+ * Returns: 0 on success, 2 on no current node
+
+ushort res_list_ch_sort_key(res_list_t* list, RES_SORT_KEY sort_key)
+ * changes the sort key of the current node of a list, and changes the location
+  of the list entry based on the new sort key
+ * current node may be set using seek, next, prev
+ * Returns: 0 on success, 2 on no current node
+
+ushort res_list_search_by_resource(res_list_t* list,
+                                   intmax_t iterations,
+                                   void* resource)
+  * searches list for first occurrence of resource, sets current node to that
+  * starts on and includes current node, repeats until end of list or when
+   number of entries tested == iterations
+  * iterations of 0 means search to end of list. Iterations of less than 0
+   means search in reverse
+  * if current node is not set, starts search at the beginning/end of list
+  * Returns: 0 on success, 2 on no list entries, 3 on no
+   matching list entry found, 4 on end of list reached (ie more iterations
+   left, but no more entries to test). Current node set to last node checked
+   on errors 3 or 4. Where iterations is 0, or equal to the number of list
+   nodes, error code 3 never gets returned, only 4
+
+ushort res_list_search_by_id(res_list_t* list,
+                             intmax_t iterations,
+                             RES_ID id)
+  * searches list for first occurrence of id, sets current node to that
+  * starts on and includes current node, repeats until end of list or when
+   number of entries tested == iterations
+  * iterations of 0 means search to end of list. Iterations of less than 0
+   means search in reverse
+  * if current node is not set, starts search at the beginning/end of list
+  * Returns: 0 on success, 2 on no list entries, 3 on no
+   matching list entry found, 4 on end of list reached (ie more iterations
+   left, but no more entries to test). Current node set to last node checked
+   on errors 3 or 4. Where iterations is 0, or equal to the number of list
+   nodes, error code 3 never gets returned, only 4
+
+ushort res_list_search_by_type(res_list_t* list,
+                               intmax_t iterations,
+                               RES_TYPE type)
+  * searches list for first occurrence of type, sets current node to that
+  * starts on and includes current node, repeats until end of list or when
+   number of entries tested == iterations
+  * iterations of 0 means search to end of list. Iterations of less than 0
+   means search in reverse
+  * if current node is not set, starts search at the beginning/end of list
+  * Returns: 0 on success, 2 on no list entries, 3 on no
+   matching list entry found, 4 on end of list reached (ie more iterations
+   left, but no more entries to test). Current node set to last node checked
+   on errors 3 or 4 Where iterations is 0, or equal to the number of list
+   nodes, error code 3 never gets returned, only 4
+
+ushort res_list_search_by_sort_key(res_list_t* list,
+                                   intmax_t iterations,
+                                   RES_SORT_KEY sort_key)
+  * searches list for first occurrence of sort_key, sets current node to that
+  * starts on and includes current node, repeats until end of list or when
+   number of entries tested == iterations
+  * iterations of 0 means search to end of list. Iterations of less than 0
+   means search in reverse
+  * if current node is not set, starts search at the beginning/end of list
+  * Returns: 0 on success, 2 on no list entries, 3 on no
+   matching list entry found, 4 on end of list reached (ie more iterations
+   left, but no more entries to test). Current node set to last node checked
+   on errors 3 or 4 Where iterations is 0, or equal to the number of list
+   nodes, error code 3 never gets returned, only 4
+
+size_t res_list_get_num_entries(res_list_t* list)
+  * gets the number of entries in a list. 0 means no entries, 1 means 1, etc...
+  * Returns: number of list entries on success, RES_LIST_ERR on failure
+  * errno is set to a res_err.h error code
+
+size_t _res_list_node_size()
+  * Returns the amount of memory a node would occupy if created
+
+void _res_list_node_set(res_list_node_t* node,
+                        void* resource,
+                        RES_ID id,
+                        RES_TYPE type,
+                        RES_SORT_KEY sort_key)
+  * fills in a node
+
+void _res_list_node_link(res_list_t* list, res_list_node_t* node)
+  * inserts a pre-filled node structure into the list
+  * location of item in the list is determined by sort_key (greater sort_key
+   means closer to the start - sort of like priority)
+  * NOTE: does NOT check if node is already linked
+
+void _res_list_node_unlink(res_list_t* list, res_list_node_t* node)
+  * unlinks a node from a list, but does not free memory node occupies
+  * NOTE: does NOT reset unlinked node's next & prev to NULL
+
+size_t _res_list_handle_size()
+  * Returns the amount of memory a handle would occupy if created
+
+void _res_list_handle_set(res_list_t* list)
+  * fills in a handle
+
+************
+* BITMAP_1 *
+************
+Latest minor version: 0
+
+types:
+  res_bitmap_t - bitmap handle
+
+res_bitmap_t* res_bitmap_create(size_t num_bits)
+  * creates a bitmap of size num_bits and a handle for it
+  * NOTE that num_bits starts at 0. That is, 0 implies a bitmap with one
+   bit, etc
+  * returns a pointer to handle on success, NULL on failure
+  * errno preserved on malloc fail
+
+ushort res_bitmap_destroy(res_bitmap_t* bitmap_handle)
+  * frees the memory used by a bitmap and its handle memory
+  * returns 0 on success, other non-zero on unknown error
+
+size_t res_bitmap_alloc(res_bitmap_t* bitmap_handle,
+                        size_t block_size)
+  * finds and marks a continuous set of free bits, of amount block_size
+  * block_size of 0 = 1 bit
+  * returns RES_BITMAP_ERR on failure, bit number of the start of the block
+   allocated on success, starting at 0
+  * errno is set to a corresponding res_err defined error on failure
+
+ushort res_bitmap_free(res_bitmap_t* bitmap_handle,
+                       size_t base,
+                       size_t limit)
+  * unmarks bits from base to (base+limit). Does NOT check if they were free
+   already
+  * limit of 0 = 1 bit
+  * returns 0 on success, 2 on base out-of-range, 3 on limit out-of-range
+
+ushort res_bitmap_take(res_bitmap_t* bitmap_handle,
+                       size_t base,
+                       size_t limit)
+  * marks bits from base to (base+limit). Does NOT check if they were taken
+   already
+  * limit of 0 = 1 bit
+  * returns 0 on success, 2 on base out-of-range, 3 on limit out-of-range
+
+ushort res_bitmap_check(res_bitmap_t* bitmap_handle,
+                        size_t base,
+                        size_t limit)
+  * tests the bits from base to (base+limit). Limit of 0 = 1 bit to test
+  * returns: 0 if all bits are 0
+             1 if all bits in this range are 1
+             2 if they vary
+             4 on base-out-of-range
+             5 on limit-out-of-range
+
+ushort res_bitmap_resize(res_bitmap_t* bitmap_handle,
+                         size_t num_bits)
+  * re-sizes the bitmap to new total size num_bits
+  * NOTE that num_bits starts at 0. That is, 0 implies a bitmap with one
+   bit, etc
+  * returns: 0 on success, 2 on memory error
+  * errno preserved on realloc fail
+
+size_t res_bitmap_count(res_bitmap_t* bitmap,
+                        size_t base,
+                        size_t limit)
+  * counts bits taken from base to base+limit. Limit of 0 = 1 bit to count
+  * returns a count on success, RES_BITMAP_ERR on failure
+  * errno is set to a corresponding res_err defined error on failure
+
+size_t res_bitmap_get_size(res_bitmap_t* bitmap)
+  * returns the number of bits (taken and free) in bitmap on success, or
+   RES_BITMAP_ERR on failure
+  * errno is set to a res_err.h error code
+
+***********
+* STACK_1 *
+***********
+Latest minor version: 0
+
+types:
+  res_stack_t - stack handle
+
+res_stack_t* res_stack_create(size_t max_entries)
+  * creates a stack of size big enough to fit max_entries, starts at 0
+   (i.e. res_add_stack(0) means stack with 1 entry)
+  * returns NULL on failure to allocate memory
+  * on error, errno preserved from calloc call
+
+ushort res_stack_destroy(res_stack_t* stack_handle)
+  * frees any memory associated with the stack, including the handle
+  * returns 0 on success, non-zero on fail
+
+ushort res_stack_push(res_stack_t* stack_handle,
+                      void* resource)
+  * pushes a resource pointer to the top of the stack
+  * returns 0 on success, 2 on stack full
+
+void* res_stack_pop(res_stack_t* stack_handle)
+  * gets the resource pointer at the top of the stack and removes that entry
+  * returns NULL on failure, resource pointer on success
+  * on error, errno set to res_err.h error code
+  * if resource was a null pointer to begin with, errno is set to 0
+
+ushort res_stack_xpush(res_stack_t* stack_handle,
+                       size_t n,
+                       void* resource)
+  * inserts a resource pointer into the stack at point n, where n=0 means the
+   first element in the stack
+  * cannot insert an entry more than one element after the top one
+  * returns 0 on success, 2 on stack full, 3 on n too high
+  
+void* res_stack_xpop(res_stack_t* stack_handle,
+                     size_t n)
+  * gets and removes the resource pointer at n, where n=0 means the first
+   element in the stack
+  * returns NULL on failure with errno set to a res_err.h error code
+  * if the resource was a null pointer to begin with, errno is set to 0
+
+ushort res_stack_change(res_stack_t* stack_handle,
+                        size_t n,
+                        void* resource)
+  * changes the resource pointer of stack entry n, where n=0 means the first
+   element in the stack
+  * returns 0 on success, 2 on stack entry non-existent
+
+void* res_stack_get(res_stack_t* stack_handle,
+                    size_t n)
+  * returns the resource pointed to by stack entry n, where n=0 means the first
+   element in the stack
+  * returns NULL on failure
+  * on error, errno set to a res_err.h error code
+  * if the resource was a null pointer to begin with, errno is set to 0
+
+ushort res_stack_resize(res_stack_t* stack_handle,
+                        size_t max_entries)
+  * resizes the stack to new size max_entries, starts at 0
+   (i.e. res_stack_resize(0) means stack with 1 entry)
+  * returns 0 on success, 2 on stack too big, 3 on memory error
+  * errno preserved on memory error
+
+size_t res_stack_get_entries(res_stack_t* stack_handle)
+  * returns the number of entries that have been pushed onto stack, where
+   0 = no stack entries at all, etc
+
+size_t res_stack_get_size(res_stack_t* stack_handle)
+  * returns the maximum number of entries that the stack can hold, where
+   0 = maximum one entry
+
