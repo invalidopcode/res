@@ -27,6 +27,7 @@
   #define RES_ERR_NO_CURRENT_NODE 306
   #define RES_ERR_STACK_EMPTY     307
   #define RES_ERR_NOT_FOUND       308
+  #define RES_ERR_UNKNOWN         309
 
  /*functions*/
   const char* res_err_string(int err);  /*returns a pointer to a string explaining the error, like strerror. If error code not known, returns strerror(errno)*/

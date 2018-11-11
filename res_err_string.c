@@ -17,6 +17,7 @@
   const char str_err_no_current_node[] = "No current node for list - use res_list_seek to select";
   const char str_err_stack_empty[] = "Stack empty";
   const char str_err_not_found[] = "The resource requested was not found";
+  const char str_err_unknown[] = "Unknown error";
 /*^^ global because these need to be read by calling function*/
 
 const char* res_err_string(int err)
@@ -35,6 +36,8 @@ const char* res_err_string(int err)
       return(str_err_stack_empty);
     case RES_ERR_NOT_FOUND :
       return(str_err_not_found);
+    case RES_ERR_UNKNOWN :
+      return(str_err_unknown);
     default :
       return(strerror(errno));
   }
