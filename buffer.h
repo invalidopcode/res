@@ -1,7 +1,7 @@
 /* buffer.h - header for buffer.c
  *
  * API: buffer 1.0
- * IMPLEMENTATION: reff-1
+ * IMPLEMENTATION: reff-2
  *
  * This file is released into the public domain, and permission is granted
  * to use, modify, and / or redistribute at will. This software is provided
@@ -11,6 +11,7 @@
  */
 #ifndef H_RES_BUFFER
 #define H_RES_BUFFER
+ #include <stdarg.h>
  #include "res_config.h"
  #include "res_types.h"
  #include "res_err.h"
@@ -34,5 +35,8 @@
  size_t res_buffer_get_n(res_buffer_t* buffer);  /*returns an appropriate value for n in strn... functions (eg strnprintf). On failure returns 0 and sets errno*/
 
  ushort  res_buffer_appendf(res_buffer_t* buffer, const char* format, ...);  /*attempts to sprintf string to buffer, and then advance till the new string terminator. If buffer is too small, tries to realloc 50% of limit at a time until either it fits, or realloc fails. Returns 0 on success, 1 on realloc failure (errno preserved), 2 on printf writing error, other non-zero on unknown error. Buffer position changes only on successful write*/
+
+/*Internal functions*/
+ ushort _res_buffer_vappendf(res_buffer_t* buffer, const char* format, va_list* args);
 #endif
 
