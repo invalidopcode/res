@@ -25,12 +25,12 @@ not a library is that the kind of functions here (eg linked lists) will almost
 certainly need minor adaptations for use in real projects.
 
 ALL function names MUST BE preceded by res\_\[modulename\]\_ - for example,
-res_bitmap_create(). Generally, modules work with resources by means of handles
+res\_bitmap\_create(). Generally, modules work with resources by means of handles
 and pointers. The purpose of resource modules is to create extensible peices of
 code that can be included in projects simply.
 
 Each module comes with a header (eg bitmap.h), and one or more .c files, each
-of which start with the module name (eg bitmap.c, bitmap_create.c). The
+of which start with the module name (eg bitmap.c, bitmap\_create.c). The
 functions exported by each module are defined in an API. APIs have a minor
 version number (for additions), and a major version number (for incompatible
 changes). Different implementations may be created to run a different
@@ -38,7 +38,7 @@ algorithm, etc. Each implementation should have a unique name and release
 number. Header files for each module MUST include API version numbers,
 implementation name, and release number, clearly.
 
-Finally, each module MAY include "res_types.h", "res_config.h", and "res_err.h"
+Finally, each module MAY include "res\_types.h", "res\_config.h", and "res\_err.h"
 
 See the api documentation for functions, etc
 
@@ -46,10 +46,10 @@ Usage
 -----
 To use code (eg stack.c, bitmap.c, etc) you simply need to include the relevant
 header (eg stack.h for stack functions). This header will include in anything
-else necessary (eg res_config.h)
+else necessary (eg res\_config.h)
 
-res_config tries to determine if the system is 32 or 64 bit itself (used for
-optimisation). However, if it fails then BITS_32 or BITS_64 must be defined for
+res\_config tries to determine if the system is 32 or 64 bit itself (used for
+optimisation). However, if it fails then BITS\_32 or BITS\_64 must be defined for
 it. 16-bit and 8-bit systems are not supported. There is no other configuration
 necessary.
 
@@ -114,10 +114,10 @@ thread-safe (ie is C11 compliant)
 
 Error Handling
 --------------
-Some functions (see api_functions) use stdc "errno" to pass information. SOME
-common error numbers are defined in res_err.h. The c function
-res_err_string(err) (documented in api_functions) is implemented in
-res_err_string.c and defined in res_err.h, and MAY return a string explaining
+Some functions (see api\_functions) use stdc "errno" to pass information. SOME
+common error numbers are defined in res\_err.h. The c function
+res\_err\_string(err) (documented in api\_functions) is implemented in
+res\_err\_string.c and defined in res\_err.h, and MAY return a string explaining
 the error. If this function does not recognise the error number then it will
 return the result of the stdc strerr function, since some res functions pass
 on errno from failed stdc functions (eg from a failed malloc call).
@@ -133,7 +133,7 @@ Tests
 -----
 Unit tests MAY be written in files [modulename]\_test.c
 
-Interactive tests MAY be written in files [modulename]\_interactive_test.c
+Interactive tests MAY be written in files [modulename]\_interactive\_test.c
 
 Internal Functions
 ------------------
