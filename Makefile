@@ -9,13 +9,15 @@ RES_DEPENDS := res_config.h res_err.h res_types.h res_err_string.o
 BITMAP_DEPENDS := $(RES_DEPENDS) bitmap.o bitmap.h
 LIST_DEPENDS := $(RES_DEPENDS) list.o list.h
 STACK_DEPENDS := $(RES_DEPENDS) stack.o stack.h
+BUFFER_DEPENDS := $(RES_DEPENDS) buffer.o buffer.h
 
-all: bitmap_test bitmap_interactive_test list_test stack_test
+all: bitmap_test bitmap_interactive_test list_test stack_test buffer_test
 
-check: bitmap_test list_test stack_test
+check: bitmap_test list_test stack_test buffer_test
 	./bitmap_test
 	./list_test
 	./stack_test
+	./buffer_test
 
 clean:
 	-$(RM) *.o
@@ -24,6 +26,7 @@ distclean: clean
 	-$(RM) bitmap_test
 	-$(RM) list_test
 	-$(RM) stack_test
+	-$(RM) buffer_test
 	-$(RM) bitmap_interactive_test
 
 bitmap_test: bitmap_test.c $(BITMAP_DEPENDS)
@@ -41,6 +44,10 @@ list_test: list_test.c $(LIST_DEPENDS)
 stack_test: stack_test.c $(STACK_DEPENDS)
 	$(CC) -c $(CFLAGS) stack_test.c -o stack_test.o
 	$(LD) $(LDFLAGS) stack_test.o stack.o res_err_string.o -o stack_test
+
+buffer_test: buffer_test.c $(BUFFER_DEPENDS)
+	$(CC) -c $(CFLAGS) buffer_test.c -o buffer_test.o
+	$(LD) $(LDFLAGS) buffer_test.o buffer.o res_err_string.o -o buffer_test
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
