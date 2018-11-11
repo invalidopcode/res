@@ -8,11 +8,12 @@ Contents
 03. Lists
 04. Bitmaps
 05. Stacks
-06. Thread safety
-07. Error handling
-08. Compilers
-09. Unit tests
-10. Internal functions
+06. Buffers
+07. Thread safety
+08. Error handling
+09. Compilers
+10. Unit tests
+11. Internal functions
 
 Intro
 -----
@@ -26,7 +27,7 @@ certainly need minor adaptations for use in real projects.
 
 ALL function names MUST BE preceded by res\_\[modulename\]\_ - for example,
 res\_bitmap\_create(). Generally, modules work with resources by means of handles
-and pointers. The purpose of resource modules is to create extensible peices of
+and pointers. The purpose of resource modules is to create extensible pieces of
 code that can be included in projects simply.
 
 Each module comes with a header (eg bitmap.h), and one or more .c files, each
@@ -38,9 +39,11 @@ algorithm, etc. Each implementation should have a unique name and release
 number. Header files for each module MUST include API version numbers,
 implementation name, and release number, clearly.
 
-Finally, each module MAY include "res\_types.h", "res\_config.h", and "res\_err.h"
+Each module MAY include "res\_types.h", "res\_config.h", and "res\_err.h"
 
 See the api documentation for functions, etc
+
+Note that all documentation follows the definitions in RFC 2119.
 
 Usage
 -----
@@ -101,6 +104,14 @@ A stack is a set of pointers, stored in the order in which they are saved, and
 retrieved in reverse order (ie first on, last off). Loading pointers from
 elsewhere in a stack is slower, whereas using them in the intended way is very
 fast. Stacks may be resized at run-time.
+
+Buffers
+-------
+Are a safe way of using c buffers - providing bounds checking and automatic
+growth (using realloc). The main expected use-case is for preparing a server
+response one part at a time, calling res\_buffer\_appendf() multiple times
+to append format strings safely to the buffer. If the buffer is too small
+then it will automatically have memory allocated to grow to fit.
 
 Thread Safety
 -------------

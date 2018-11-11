@@ -344,3 +344,65 @@ size_t res_stack_get_size(res_stack_t* stack_handle)
   * returns the maximum number of entries that the stack can hold, where
    0 = maximum one entry
 
+************
+* BUFFER_1 *
+************
+Latest minor version: 0
+
+types:
+  res_buffer_t - buffer handle
+
+res_buffer_t* res_buffer_create(size_t limit)
+  * creates a buffer of size limit+1 bytes, and a handle for it
+  * sets buffer position to the start of the new buffer
+  * returns pointer to handle on success
+  * returns NULL on failure, errno is preserved on memory allocation failure
+  * note that contents of new buffer is undefined
+
+ushort res_buffer_destroy(res_buffer_t* buffer_handle)
+  * frees buffer and handle memory for buffer_handle
+  * returns 0 on success, other non-zero on unknown error
+
+void* res_buffer_get(res_buffer_t* buffer_handle)
+  * returns pointer to current position in buffer
+  * returns NULL on failure
+
+ushort res_buffer_next(res_buffer_t* buffer_handle,
+                       size_t n)
+  * attempts to add n bytes to buffer position
+  * returns 0 on success, 1 on buffer limit reached, other non-zero on
+   unknown error
+
+ushort res_buffer_prev(res_buffer_t* buffer_handle,
+                       size_t n)
+  * attempts to move buffer position back n bytes
+  * returns 0 on success, 1 on buffer start reached, other non-zero on
+   unknown error
+
+ushort res_buffer_reset(res_buffer_t* buffer_handle)
+  * moves buffer to original position when created
+  * contents, limit, etc are unchanged
+  * returns 0 on success, other non-zero on unknown error
+
+size_t res_buffer_get_n(res_buffer_t* buffer_handle)
+  * returns an appropriate value for n in strn... functions (eg strnprintf)
+  * returns 0 and sets errno to a value in res_err.h on failure (NOT possible
+   in reference implementation)
+
+ushort  res_buffer_appendf(res_buffer_t* buffer_handle,
+                           const char* format,
+                           ...)
+  * attempts to snprintf a string to the buffer, then advance buffer position
+   to the new string terminator (ie sequential calls to appendf will function
+   fine without the caller moving the buffer in any way)
+  * if the buffer is too small to fit the new string, tries to increase the
+   size of the buffer, until either it fits, or memory reallocation fails
+   (in reference implementation, increases at roughly 50% per iteration)
+  * returns 0 on success, 1 on memory failure (errno preserved), 2 on snprintf
+   writing error, other non-zero on unknown error
+  * buffer position changes only on successful write
+  * note that if buffer grows, its size may be greater than that needed for the
+   string written (in order to avoid doing a reallocation on every call to
+   appendf). In that case, note that new buffer contents following the string
+   written are undefined
+
