@@ -44,7 +44,6 @@ int main()
       {
         free(line);  /*specs say always free line pointer*/
         res_bitmap_destroy(test_bitmap);
-        res_bitmap_finish();
         return(EXIT_FAILURE);
       }
 
@@ -61,7 +60,6 @@ int main()
           case 'q' :
             free(line);
             res_bitmap_destroy(test_bitmap);
-            res_bitmap_finish();
             return(EXIT_SUCCESS);
           case 'p' :
             print_bitmap(test_bitmap);
